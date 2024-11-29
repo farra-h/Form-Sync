@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <!-- Material design iconic font -->
+	<link rel="stylesheet" href="/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+    <!-- CSS Style -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<!-- Start Background -->
+    <div class="wrapper" style="background-image: url('/images/background-2.jpg');">
+        <!-- Start Inner -->
+         <div class="inner">
+            <div class="holder">
+            </div>
+            <form action="" id="form">
+                <h3>Inputs Form</h3>
+                <div class="form-group">
+                    <input type="text" id="first-name" placeholder="First Name" class="form-control">
+                    <input type="text" id="last-name" placeholder="Last Name" class="form-control">
+                </div>
+                <div class="form-wrapper">
+                    <input type="text" id="user-name" placeholder="Username" class="form-control">
+                    <i class="zmdi zmdi-account"></i>
+                </div>
+                <div class="form-wrapper">
+                    <input type="text" id="email" placeholder="Email Address" class="form-control">
+                    <i class="zmdi zmdi-email"></i>
+                </div>
+                <div class="form-wrapper">
+                    <select name="" id="gender" class="form-control">
+                        <option value="" disabled selected>Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                    <i class="zmdi zmdi-caret-down" style="font-size: 17px"></i>
+                </div>
+                <div class="form-wrapper">
+                    <input type="password" id="password" placeholder="Password" class="form-control">
+                    <i class="zmdi zmdi-lock"></i>
+                </div>
+                <button>Submit
+                    <i class="zmdi zmdi-arrow-right"></i>
+                </button>
+            </form>
+         </div>
+    </div>
+ </div>
+ <script>
+    // Client-side WebSocket connection
+    const wss = new WebSocket(`ws://${location.host}`);
+
+    // Handle incoming WebSocket messages
+    wss.onmessage = (event) => {
+    const dataList = JSON.parse(event.data);
+
+    // Update the left div with the latest data
+    const dataContainer = document.querySelector(".holder"); // Target the left div
+    dataContainer.innerHTML = ""; // Clear previous entries
+
+    dataList.forEach((data) => {
+        const item = document.createElement("div");
+        item.className = "data-item";
+        item.innerHTML = `
+            <span style="font-weight: bold; color:#fff;">First Name:</span> ${data.firstName}<br>
+            <span style="font-weight: bold; color:#fff;">Last Name:</span> ${data.lastName}<br>
+            <span style="font-weight: bold; color:#fff;">Username:</span> ${data.username}<br>
+            <span style="font-weight: bold; color:#fff;">Email Address:</span> ${data.email}<br>
+            <span style="font-weight: bold; color:#fff;">Gender:</span> ${data.gender}<br>
+            <span style="font-weight: bold; color:#fff;">Password:</span> ${data.password}<br>
+            <hr>
+            `;
+        dataContainer.appendChild(item);
+    });
+    };
+
+    // Handle form submission
+    document.querySelector("form").addEventListener("submit", (e) => {
+    e.preventDefault(); // Prevent the default form submission
+
+    // Get form data
+    const firstName = document.querySelector("#first-name").value;
+    const lastName = document.querySelector("#last-name").value;
+    const username = document.querySelector("#user-name").value;
+    const email = document.querySelector("#email").value;
+    const gender = document.querySelector("#gender").value;
+    const password = document.querySelector("#password").value;
+
+    // Send the data to the server via WebSocket
+    const formData = { firstName, lastName, username, email, gender, password };
+    wss.send(JSON.stringify(formData));
+
+    // Clear the form inputs
+    document.querySelector("#first-name").value = "";
+    document.querySelector("#last-name").value = "";
+    document.querySelector("#user-name").value = "";
+    document.querySelector("#email").value = "";
+    document.querySelector("#gender").value = "";
+    document.querySelector("#password").value = "";
+    });
+
+
+ </script>
+</body>
+</html>
